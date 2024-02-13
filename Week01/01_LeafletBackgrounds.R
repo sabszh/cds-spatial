@@ -7,17 +7,18 @@
 
 # Packages
 install.packages("leaflet")
-install.packages("htmltools") 
+install.packages("htmltools")
 install.packages("googlesheets4")
 
 # Example with Markers
 library(leaflet)
+library(tidyverse)
 
 popup = c("Robin", "Jakub", "Jannes")
 
 leaflet() %>%
   addProviderTiles("Esri.WorldPhysical") %>% 
- #addProviderTiles("Esri.WorldImagery") %>% 
+  #addProviderTiles("Esri.WorldImagery") %>% 
   addAwesomeMarkers(lng = c(-3, 23, 11),
                     lat = c(52, 53, 49), 
                     popup = popup)
@@ -38,10 +39,10 @@ leaflet() %>%
   addProviderTiles("Esri.WorldPhysical", group = "Physical") %>% 
   addProviderTiles("Esri.WorldImagery", group = "Aerial") %>% 
   addProviderTiles("MtbMap", group = "Geo") %>% 
-
-addLayersControl(
-  baseGroups = c("Geo","Aerial", "Physical"),
-  options = layersControlOptions(collapsed = T))
+  
+  addLayersControl(
+    baseGroups = c("Geo","Aerial", "Physical"),
+    options = layersControlOptions(collapsed = T))
 
 # note that you can feed plain Lat Long columns into Leaflet
 # without having to convert into spatial objects (sf), or projecting
@@ -66,6 +67,7 @@ for (provider in esri) {
   l_aus <- l_aus %>% addProviderTiles(provider, group = provider)
 }
 
+
 AUSmap <- l_aus %>%
   addLayersControl(baseGroups = names(esri),
                    options = layersControlOptions(collapsed = FALSE)) %>%
@@ -85,7 +87,7 @@ AUSmap <- l_aus %>%
                         myMap.minimap.changeLayer(L.tileLayer.provider(e.name));
                         })
                         }") %>% 
-addControl("", position = "topright")
+  addControl("", position = "topright")
 
 AUSmap
 ################################## SAVE FINAL PRODUCT
@@ -98,6 +100,13 @@ saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
 #########################################################
 #
 # Task 1: Create a Danish equivalent with esri layers, call it DKmap
+DKmap <- AUSmap %>%
+  setView(11, 56, zoom = 6.5)
+
+DKmap
+saveWidget(DKmap, "DKmap.html", selfcontained = TRUE)
+
+
 #
 # Task 2: Start collecting spatial data into a spreadsheet: https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479
 #
@@ -128,3 +137,42 @@ leaflet() %>%
 
 #########################################################
 
+DKmap_populated <- DKmap %>% 
+  addMarkers(lng = places$Longitude, 
+             lat = places$Latitude,
+             popup = places$Description)
+
+DKmap_populated
+
+saveWidget(DKmap_populated, "DKmap_pop.html", selfcontained = TRUE)
+#########################################################
+#
+# Extra task - Chicago Crime
+
+# Loading data
+ChicagoCrimes2017 <-read_csv("cds-spatial/Week01/data/ChicagoCrimes2017.csv")
+
+# Finding the map area
+leaflet() %>% 
+  setView(-87,41, zoom = 9) %>%
+  addTiles()  # checking I am in the right area
+
+
+# Selecting columns
+crime_places <- ChicagoCrimes2017 %>% 
+  select("Primary Type", "Latitude", "Longitude")
+
+# Omiting NAs
+crime_places <- na.omit(crime_places[!is.na(crime_places$Longitude) & !is.na(crime_places$Latitude), ])
+
+# Clustering
+leaflet(crime_places) %>% 
+  addTiles() %>%
+  addMarkers(clusterOptions = markerClusterOptions(spiderfyOnMaxZoom= TRUE))
+
+
+## Display as a heatmap
+
+
+
+#########################################################
