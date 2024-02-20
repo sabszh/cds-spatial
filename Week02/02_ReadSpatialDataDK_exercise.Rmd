@@ -50,40 +50,33 @@ In this exercise you will read in three shapefiles (parks, playgrounds, and fore
 
 ```{r load, eval=FALSE, echo=TRUE}
 # Load the sf package
-pacman::p_load(sf)
+library(sf)
 
 # Read in the forests shapefile
-forests <- read_sf("../data/forests.shp")
+forests <- ___("../data/forests.shp")
 
 # Read in the parks shapefile
-parks <- read_sf("../data/parks.shp")
+parks <- ___(___)
 
 # Read in the playgrounds shapefile
-playgrounds <- read_sf("../data/playgrounds4326.shp")
+playgrounds <- ___(___)
 
 # Read in the shelters json
-shelters <- read_sf("../data/shelters.json")
+shelters <- ___(___)
 
 # View the first few features of all layers
-forests
-parks
-playgrounds
-shelters
+___(___)
 ```
 
 ## Questions: 
 
 1. How many features does each layer contain and what kind of geometry are they?
-- Forest: 32, multipolygon
-- Parks: 47, mp
-- Playgrounds: 51, point
-- Shelters: 19, p
-
 2. What is the CRS value in these objects?
-- Forest: Projected CRS: ETRS89 / UTM zone 32N
-- Parks: Projected CRS: ETRS89 / UTM zone 32N
-- Playgrounds: NA
-- Shelters: Projected CRS: ETRS89 / UTM zone 32N
+
+
+Well done, now you should see how easy it can be to read in shapefiles and you got your first taste of what an sf object looks like.
+
+<br>
 
 
 # Task 2: sf objects are data frames
@@ -99,20 +92,23 @@ Spatial objects in `sf` are just data frames with some special properties. This 
 * Use the `head()` function to check which variables exist in your new data frame. Does the data frame only have the `navn` and `areal_m2` columns (the answer is no, why)?
 
 ```{r wrangle-parks, eval=FALSE, echo=TRUE}
-# Load the sf package and the dplyr package
-pacman::p_load(dplyr,sf)
+# Load the sf package
+___
+
+# ... and the dplyr package
+___
 
 # Use filter() to limit to over5ha parks
-over5ha <- filter(parks,areal_m2 > 50000)
+___
 
 # Count the number of rows
-nrow(over5ha)
+___(over5ha)
 
 # Limit to navn and areal_m2 variables
-over5_lim <- over5ha %>% select(navn, areal_m2) 
+over5_lim <- over5ha %>% ___(navn, areal_m2) 
 
 # Use head() to look at the first few records
-head(over5_lim)
+___(over5_lim)
 ```
 
 Great! You can see why the `sf` package is so nice – your spatial objects are data frames that you can smoothly manipulate with `dplyr`. The number of parks over 5ha is 17
@@ -137,20 +133,20 @@ In this exercise, you will convert the data frame to what's called a `tibble` wi
 
 ```{r geometry, eval = FALSE, echo = TRUE}
 # Create a standard, non-spatial data frame with one column
-df <- data.frame(a = 1:3)
+df <- ___(a = 1:3)
 
 # Add a list column to your data frame
-df$b <- list(1:4, 1:5, 1:10)
+df$b <- ___(1:4, 1:5, 1:10)
 
 # Look at your data frame with head
-head(df)
+___(df)
 
 # Convert your data frame to a tibble and print on console
-as_tibble(df)
+___(df)
 
-as_tibble()# Pull out the third observation from both columns individually
-df$a[3]
-df$b[3]
+# Pull out the third observation from both columns individually
+df$___[___]
+df$___[___]
 ```
 You now have a better sense of what a list column is. You can see how it can be used to store far more information in a single variable than other types of columns. These list-columns are how `sf` stores detailed geographic information on each feature in a single record. Converting the data frame to a tibble is not necessary but a tibble can provide a better print out of the object.
 
@@ -197,19 +193,19 @@ length(which(result > val))
 
 ```{r forests, eval=FALSE, echo=TRUE}
 # Compute the areas of the forests
-areas <- st_area(forests)
+areas <- ___(forests)
 
 # Create a quick histogram of the areas using hist
-hist(areas)
+___(___)
 
 # Filter to forests greater than 200000 (square meters)
-big_forests <- forests %>% filter(areal_m2 > 200000)
+big_forests <- ___ %>% ___(___(___) > 200000)
 
 # Can you plot the big_forests with their names??(hint: check the plotting section in Task 5 below)
-plot(big_forests["navn"])
+
 
 # Plot just the geometry of big_forests
-plot(st_geometry(big_forests))
+___(___(big_forests))
 
 ```
 
@@ -234,19 +230,19 @@ Often, you also want to plot multiple spatial objects together to see if and how
 
 ```{r plotting-sf, eval=FALSE}
 # Plot the forests object using all defaults
-plot(forests)
+___(forests)
 
 # Plot just the areal_m2 attribute of the forests data
-plot(forests["areal_m2"])
+___(forests[___])
 
 # Create a new object of just the forests geometry
-forests_geo <- st_geometry(forests)
+forests_geo <- ___(forests)
 
 # Plot the geometry of the forests data
-plot(forests_geo)
+___(forests_geo)
 
 # Plot the geometry of the forests and the parks object together
-plot(forests_geo, col = "green");plot(parks$geometry, col = "pink", add = T)
+___(forests_geo, col = "_____");___(parks$geometry, col = _____, add = _____)
 
 ```
 
@@ -274,31 +270,30 @@ Multi-band rasters will have more than one layer. An example is a color aerial p
 
 ```{r loadraster, eval=FALSE, echo=TRUE}
 # Load the raster package
-pacman::p_load(raster)
+___(___)
 
 # Read in the mound elevation single-band raster
-elevation <- raster("../Data/DNK_msk_alt.grd")
+elevation <- ____(___)
 
 # Read in the orthophoto image multi-band raster
-aarhus <- brick("../Data/Aarhus_1m.TIF")
+aarhus <- brick(_____)
 
 # Get the class for the new objects
-class(elevation)
-class(aarhus)
+class(___)
+class(___)
 
 # Identify how many layers each object has
-nlayers(elevation)
-nlayers(aarhus)
+nlayers(___)
+nlayers(___)
 
 # Identify the resolution of each raster
-res(elevation)
-res(aarhus)
+___(elevation)
+___(aarhus)
 ```
 
 *Questions:*
 
 1. What are the dimensions (number of columns and rows) of the `elevation` raster?
-- 
 2. What is the resolution of `aarhus` orthophoto? How many layers does it contain and what do they represent?
 
 Now you've learned how to read in single and multi-band rasters. You should have noticed, based on the `nlayers()` function, that the `elevation` object has a single layer and the `aarhus` object has five (well, four useful ones, if you plot it).
@@ -316,16 +311,14 @@ Instead of storing raster objects in data frames, the `raster` package stores sp
 
 ```{r load raster, eval=FALSE, echo=TRUE}
 # Get the extent of the elevation and aarhus object
-extent(elevation)
-extent(aarhus)
+___(___)
 
 # Get the CRS of the aarhus and elevation object
-crs(elevation)
-crs(aarhus)
+___(___)
 
 # Determine the number of grid cells in both raster objects
-ncell(aarhus)
-ncell(elevation)
+___(aarhus)
+___(elevation)
 ```
 
 
@@ -348,17 +341,16 @@ The raster package has added useful methods for plotting both single and multi-b
 
 ```{r plot raster, eval=FALSE, echo=TRUE }
 # Plot the elevation raster (single raster)
-plot(elevation)
+___
 
 # Plot the aarhus raster (as a single image for each layer)
-plot(aarhus)
+___
 
 # Plot the aarhus raster as an image
-plotRGB(aarhus)
+____
+
 
 # Plot the two images together (on top of one another). Hint: it only works if their CRSes are compatible. Return to this after Task 9 and 10 if the CRSes are different.
-plotRGB(aarhus, stretch = "lin"); plot(elevation, add = T)
-
 ____
 ```
 
@@ -382,19 +374,20 @@ When the geographic data you read in with `sf` already has a CRS defined both `s
 
 ```{r crs, eval=FALSE}
 # Determine the CRS for the elevation and playgrounds vector objects
-st_crs(forests) # ETRS89 / UTM zone 32N 
-st_crs(playgrounds) # NA
+___(forests)
+___(playgrounds)
 
 # Assign the CRS to playgrounds
-crs_1 <- 4326
-st_crs(playgrounds) <- crs_1
+crs_1 <- _____
+___(playgrounds) <- crs_1
 
 # Determine the CRS for the aarhus and elevation rasters
-st_crs(aarhus) # +proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs 
-st_crs(elevation) # +proj=longlat +ellps=WGS84 +no_defs 
+___(aarhus)
+___(elevation)
 
 # Write here the proj4string for the aarhus layer
-crs_2 <- "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs"
+crs_2 <- "___"
+
 ```
 
 
@@ -418,17 +411,19 @@ Note that you will use `method = "ngb"` in your call to `projectRaster()` to pre
 
 ```{r crs-assign, eval=FALSE}
 # Get the CRS from the aarhus object
-the_crs <- crs(aarhus, asText = TRUE)
+the_crs <- ___(aarhus, asText = TRUE)
 
 # Project playgrounds to match the CRS of aarhus
-playgrounds_crs <- st_transform(playgrounds, crs = the_crs)
+playgrounds_crs <- ___(playgrounds, crs = ___)
 
 # Project elevation to match the CRS of aarhus
-elevation_crs <- projectRaster(elevation, crs = the_crs, method = "ngb")
+elevation_crs <- ___(elevation, crs = ___, method = "ngb")
 
 # Look at the CRS to see if they match
-st_crs(playgrounds_crs)
-st_crs(elevation_crs)
+___(playgrounds_crs)
+___(elevation_crs)
+
+
 ```
 
 
@@ -452,12 +447,13 @@ Make sure `sf`, `raster` and `tmap` are loaded in your workspace.
 ```{r plot, eval=FALSE}
 # Plot aarhus and playgrounds (run both lines together)
 # Do you see the playgrounds?
-plotRGB(aarhus, stretch = "lin", alpha = 100)
-plot(playgrounds_crs, col = "green", lwd = 3, add = TRUE)
+___(aarhus, stretch = "lin")
+___(playgrounds, add = TRUE)
+
 
 # Simply run the tmap code
-pacman::p_load(tmap)
-tmap::tm_shape(aarhus) + 
+library(tmap)
+tm_shape(aarhus) + 
     tm_rgb() + 
     tm_shape(parks) + 
     tm_polygons(col = "green") +
